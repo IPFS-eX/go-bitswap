@@ -6,8 +6,13 @@ import (
 	"context"
 	"errors"
 
+	"github.com/ipfs/go-blockservice"
+	"github.com/ipfs/go-merkledag"
+
 	"sync"
 	"time"
+
+	ipld "github.com/ipfs/go-ipld-format"
 
 	delay "github.com/ipfs/go-ipfs-delay"
 
@@ -23,6 +28,7 @@ import (
 	bssm "github.com/ipfs/go-bitswap/internal/sessionmanager"
 	bsspm "github.com/ipfs/go-bitswap/internal/sessionpeermanager"
 	bsmsg "github.com/ipfs/go-bitswap/message"
+	pb "github.com/ipfs/go-bitswap/message/pb"
 	bsnet "github.com/ipfs/go-bitswap/network"
 	blocks "github.com/ipfs/go-block-format"
 	cid "github.com/ipfs/go-cid"
@@ -277,6 +283,20 @@ func (bs *Bitswap) GetBlock(parent context.Context, k cid.Cid) (blocks.Block, er
 	return bsgetter.SyncGetBlock(parent, k, bs.GetBlocks)
 }
 
+func (bs *Bitswap) Push(ctx context.Context, copy uint32, peer peer.ID, c cid.Cid) error {
+	msg := bsmsg.New(true)
+
+	block, err := bs.blockstore.Get(c)
+	if err != nil {
+		return err
+	}
+	msg.AddBlock(block)
+	msg.AddCopyDistribute(block.Cid())
+
+	log.Info("msg:", msg.GetBlockPresence(block.Cid()), " msg_copy:", pb.Message_CopyDistribute)
+	return bs.network.SendMessage(ctx, peer, msg)
+}
+
 // WantlistForPeer returns the currently understood list of blocks requested by a
 // given peer.
 func (bs *Bitswap) WantlistForPeer(p peer.ID) []cid.Cid {
@@ -398,6 +418,24 @@ func (bs *Bitswap) receiveBlocksFrom(ctx context.Context, from peer.ID, blks []b
 	return nil
 }
 
+func (bs *Bitswap) maybeDistributeBlock(ctx context.Context, b blocks.Block, incoming bsmsg.BitSwapMessage) {
+	if 1 == 1 || incoming.GetBlockPresence(b.Cid()) == pb.Message_CopyDistribute {
+		dag := merkledag.NewDAGService(blockservice.New(bs.blockstore, bs))
+		node, err := ipld.Decode(b)
+		if err != nil {
+			log.Debugf("decode block err:%s, cid:%s", err.Error(), b.Cid().String())
+			return
+		}
+
+		if err := dag.Add(ctx, node); err != nil {
+			log.Debugf("dag add err:%s, cid:%s", err.Error(), b.Cid().String())
+			return
+		}
+		//todo: does we need to store by blockstore.Put(block)?
+		log.Debug("dag/block add success, block.cid:", b.Cid().String())
+	}
+}
+
 // ReceiveMessage is called by the network interface when a new message is
 // received.
 func (bs *Bitswap) ReceiveMessage(ctx context.Context, p peer.ID, incoming bsmsg.BitSwapMessage) {
@@ -417,6 +455,7 @@ func (bs *Bitswap) ReceiveMessage(ctx context.Context, p peer.ID, incoming bsmsg
 		bs.updateReceiveCounters(iblocks)
 		for _, b := range iblocks {
 			log.Debugf("[recv] block; cid=%s, peer=%s", b.Cid(), p)
+			bs.maybeDistributeBlock(ctx, b, incoming)
 		}
 	}
 
