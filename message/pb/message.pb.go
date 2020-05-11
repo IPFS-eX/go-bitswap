@@ -3,14 +3,12 @@
 
 package bitswap_message_pb
 
-import (
-	fmt "fmt"
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/gogo/protobuf/gogoproto"
+
+import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,31 +19,32 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Message_BlockPresenceType int32
 
 const (
-	Message_Have     Message_BlockPresenceType = 0
-	Message_DontHave Message_BlockPresenceType = 1
+	Message_Have           Message_BlockPresenceType = 0
+	Message_DontHave       Message_BlockPresenceType = 1
+	Message_CopyDistribute Message_BlockPresenceType = 2
 )
 
 var Message_BlockPresenceType_name = map[int32]string{
 	0: "Have",
 	1: "DontHave",
+	2: "CopyDistribute",
 }
-
 var Message_BlockPresenceType_value = map[string]int32{
-	"Have":     0,
-	"DontHave": 1,
+	"Have":           0,
+	"DontHave":       1,
+	"CopyDistribute": 2,
 }
 
 func (x Message_BlockPresenceType) String() string {
 	return proto.EnumName(Message_BlockPresenceType_name, int32(x))
 }
-
 func (Message_BlockPresenceType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 0}
+	return fileDescriptor_message_62d7892902109606, []int{0, 0}
 }
 
 type Message_Wantlist_WantType int32
@@ -59,7 +58,6 @@ var Message_Wantlist_WantType_name = map[int32]string{
 	0: "Block",
 	1: "Have",
 }
-
 var Message_Wantlist_WantType_value = map[string]int32{
 	"Block": 0,
 	"Have":  1,
@@ -68,24 +66,26 @@ var Message_Wantlist_WantType_value = map[string]int32{
 func (x Message_Wantlist_WantType) String() string {
 	return proto.EnumName(Message_Wantlist_WantType_name, int32(x))
 }
-
 func (Message_Wantlist_WantType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 0, 0}
+	return fileDescriptor_message_62d7892902109606, []int{0, 0, 0}
 }
 
 type Message struct {
-	Wantlist       Message_Wantlist        `protobuf:"bytes,1,opt,name=wantlist,proto3" json:"wantlist"`
-	Blocks         [][]byte                `protobuf:"bytes,2,rep,name=blocks,proto3" json:"blocks,omitempty"`
-	Payload        []Message_Block         `protobuf:"bytes,3,rep,name=payload,proto3" json:"payload"`
-	BlockPresences []Message_BlockPresence `protobuf:"bytes,4,rep,name=blockPresences,proto3" json:"blockPresences"`
-	PendingBytes   int32                   `protobuf:"varint,5,opt,name=pendingBytes,proto3" json:"pendingBytes,omitempty"`
+	Wantlist             Message_Wantlist        `protobuf:"bytes,1,opt,name=wantlist" json:"wantlist"`
+	Blocks               [][]byte                `protobuf:"bytes,2,rep,name=blocks" json:"blocks,omitempty"`
+	Payload              []Message_Block         `protobuf:"bytes,3,rep,name=payload" json:"payload"`
+	BlockPresences       []Message_BlockPresence `protobuf:"bytes,4,rep,name=blockPresences" json:"blockPresences"`
+	PendingBytes         int32                   `protobuf:"varint,5,opt,name=pendingBytes,proto3" json:"pendingBytes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
 func (m *Message) Reset()         { *m = Message{} }
 func (m *Message) String() string { return proto.CompactTextString(m) }
 func (*Message) ProtoMessage()    {}
 func (*Message) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0}
+	return fileDescriptor_message_62d7892902109606, []int{0}
 }
 func (m *Message) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -95,15 +95,15 @@ func (m *Message) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Message.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (m *Message) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Message.Merge(m, src)
+func (dst *Message) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message.Merge(dst, src)
 }
 func (m *Message) XXX_Size() int {
 	return m.Size()
@@ -150,15 +150,18 @@ func (m *Message) GetPendingBytes() int32 {
 }
 
 type Message_Wantlist struct {
-	Entries []Message_Wantlist_Entry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries"`
-	Full    bool                     `protobuf:"varint,2,opt,name=full,proto3" json:"full,omitempty"`
+	Entries              []Message_Wantlist_Entry `protobuf:"bytes,1,rep,name=entries" json:"entries"`
+	Full                 bool                     `protobuf:"varint,2,opt,name=full,proto3" json:"full,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
 func (m *Message_Wantlist) Reset()         { *m = Message_Wantlist{} }
 func (m *Message_Wantlist) String() string { return proto.CompactTextString(m) }
 func (*Message_Wantlist) ProtoMessage()    {}
 func (*Message_Wantlist) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 0}
+	return fileDescriptor_message_62d7892902109606, []int{0, 0}
 }
 func (m *Message_Wantlist) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -168,15 +171,15 @@ func (m *Message_Wantlist) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_Message_Wantlist.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (m *Message_Wantlist) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Message_Wantlist.Merge(m, src)
+func (dst *Message_Wantlist) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message_Wantlist.Merge(dst, src)
 }
 func (m *Message_Wantlist) XXX_Size() int {
 	return m.Size()
@@ -202,18 +205,21 @@ func (m *Message_Wantlist) GetFull() bool {
 }
 
 type Message_Wantlist_Entry struct {
-	Block        Cid                       `protobuf:"bytes,1,opt,name=block,proto3,customtype=Cid" json:"block"`
-	Priority     int32                     `protobuf:"varint,2,opt,name=priority,proto3" json:"priority,omitempty"`
-	Cancel       bool                      `protobuf:"varint,3,opt,name=cancel,proto3" json:"cancel,omitempty"`
-	WantType     Message_Wantlist_WantType `protobuf:"varint,4,opt,name=wantType,proto3,enum=bitswap.message.pb.Message_Wantlist_WantType" json:"wantType,omitempty"`
-	SendDontHave bool                      `protobuf:"varint,5,opt,name=sendDontHave,proto3" json:"sendDontHave,omitempty"`
+	Block                Cid                       `protobuf:"bytes,1,opt,name=block,proto3,customtype=Cid" json:"block"`
+	Priority             int32                     `protobuf:"varint,2,opt,name=priority,proto3" json:"priority,omitempty"`
+	Cancel               bool                      `protobuf:"varint,3,opt,name=cancel,proto3" json:"cancel,omitempty"`
+	WantType             Message_Wantlist_WantType `protobuf:"varint,4,opt,name=wantType,proto3,enum=bitswap.message.pb.Message_Wantlist_WantType" json:"wantType,omitempty"`
+	SendDontHave         bool                      `protobuf:"varint,5,opt,name=sendDontHave,proto3" json:"sendDontHave,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
 }
 
 func (m *Message_Wantlist_Entry) Reset()         { *m = Message_Wantlist_Entry{} }
 func (m *Message_Wantlist_Entry) String() string { return proto.CompactTextString(m) }
 func (*Message_Wantlist_Entry) ProtoMessage()    {}
 func (*Message_Wantlist_Entry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 0, 0}
+	return fileDescriptor_message_62d7892902109606, []int{0, 0, 0}
 }
 func (m *Message_Wantlist_Entry) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -223,15 +229,15 @@ func (m *Message_Wantlist_Entry) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_Message_Wantlist_Entry.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (m *Message_Wantlist_Entry) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Message_Wantlist_Entry.Merge(m, src)
+func (dst *Message_Wantlist_Entry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message_Wantlist_Entry.Merge(dst, src)
 }
 func (m *Message_Wantlist_Entry) XXX_Size() int {
 	return m.Size()
@@ -271,15 +277,18 @@ func (m *Message_Wantlist_Entry) GetSendDontHave() bool {
 }
 
 type Message_Block struct {
-	Prefix []byte `protobuf:"bytes,1,opt,name=prefix,proto3" json:"prefix,omitempty"`
-	Data   []byte `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	Prefix               []byte   `protobuf:"bytes,1,opt,name=prefix,proto3" json:"prefix,omitempty"`
+	Data                 []byte   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Message_Block) Reset()         { *m = Message_Block{} }
 func (m *Message_Block) String() string { return proto.CompactTextString(m) }
 func (*Message_Block) ProtoMessage()    {}
 func (*Message_Block) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 1}
+	return fileDescriptor_message_62d7892902109606, []int{0, 1}
 }
 func (m *Message_Block) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -289,15 +298,15 @@ func (m *Message_Block) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_Message_Block.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (m *Message_Block) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Message_Block.Merge(m, src)
+func (dst *Message_Block) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message_Block.Merge(dst, src)
 }
 func (m *Message_Block) XXX_Size() int {
 	return m.Size()
@@ -323,15 +332,18 @@ func (m *Message_Block) GetData() []byte {
 }
 
 type Message_BlockPresence struct {
-	Cid  Cid                       `protobuf:"bytes,1,opt,name=cid,proto3,customtype=Cid" json:"cid"`
-	Type Message_BlockPresenceType `protobuf:"varint,2,opt,name=type,proto3,enum=bitswap.message.pb.Message_BlockPresenceType" json:"type,omitempty"`
+	Cid                  Cid                       `protobuf:"bytes,1,opt,name=cid,proto3,customtype=Cid" json:"cid"`
+	Type                 Message_BlockPresenceType `protobuf:"varint,2,opt,name=type,proto3,enum=bitswap.message.pb.Message_BlockPresenceType" json:"type,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
 }
 
 func (m *Message_BlockPresence) Reset()         { *m = Message_BlockPresence{} }
 func (m *Message_BlockPresence) String() string { return proto.CompactTextString(m) }
 func (*Message_BlockPresence) ProtoMessage()    {}
 func (*Message_BlockPresence) Descriptor() ([]byte, []int) {
-	return fileDescriptor_33c57e4bae7b9afd, []int{0, 2}
+	return fileDescriptor_message_62d7892902109606, []int{0, 2}
 }
 func (m *Message_BlockPresence) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -341,15 +353,15 @@ func (m *Message_BlockPresence) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_Message_BlockPresence.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
 		return b[:n], nil
 	}
 }
-func (m *Message_BlockPresence) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Message_BlockPresence.Merge(m, src)
+func (dst *Message_BlockPresence) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Message_BlockPresence.Merge(dst, src)
 }
 func (m *Message_BlockPresence) XXX_Size() int {
 	return m.Size()
@@ -368,57 +380,18 @@ func (m *Message_BlockPresence) GetType() Message_BlockPresenceType {
 }
 
 func init() {
-	proto.RegisterEnum("bitswap.message.pb.Message_BlockPresenceType", Message_BlockPresenceType_name, Message_BlockPresenceType_value)
-	proto.RegisterEnum("bitswap.message.pb.Message_Wantlist_WantType", Message_Wantlist_WantType_name, Message_Wantlist_WantType_value)
 	proto.RegisterType((*Message)(nil), "bitswap.message.pb.Message")
 	proto.RegisterType((*Message_Wantlist)(nil), "bitswap.message.pb.Message.Wantlist")
 	proto.RegisterType((*Message_Wantlist_Entry)(nil), "bitswap.message.pb.Message.Wantlist.Entry")
 	proto.RegisterType((*Message_Block)(nil), "bitswap.message.pb.Message.Block")
 	proto.RegisterType((*Message_BlockPresence)(nil), "bitswap.message.pb.Message.BlockPresence")
+	proto.RegisterEnum("bitswap.message.pb.Message_BlockPresenceType", Message_BlockPresenceType_name, Message_BlockPresenceType_value)
+	proto.RegisterEnum("bitswap.message.pb.Message_Wantlist_WantType", Message_Wantlist_WantType_name, Message_Wantlist_WantType_value)
 }
-
-func init() { proto.RegisterFile("message.proto", fileDescriptor_33c57e4bae7b9afd) }
-
-var fileDescriptor_33c57e4bae7b9afd = []byte{
-	// 497 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0xdf, 0x8a, 0xd3, 0x40,
-	0x14, 0xc6, 0x33, 0x4d, 0xd2, 0xc6, 0xd3, 0xee, 0x52, 0xe7, 0x42, 0x42, 0xc0, 0x34, 0x5b, 0xbc,
-	0x88, 0xca, 0x66, 0xa1, 0xfb, 0x04, 0x5b, 0xff, 0xa0, 0x82, 0x20, 0x83, 0xd0, 0xeb, 0xfc, 0x99,
-	0xd6, 0xc1, 0x6c, 0x12, 0x33, 0x53, 0xd7, 0xbe, 0x85, 0x8f, 0xb5, 0x37, 0xc2, 0x5e, 0x8a, 0xca,
-	0x22, 0xed, 0x8b, 0x48, 0x4e, 0xa6, 0x85, 0xba, 0xe2, 0xee, 0xdd, 0x9c, 0x33, 0xe7, 0xfb, 0x65,
-	0xbe, 0xef, 0x10, 0x38, 0x38, 0xe7, 0x52, 0xc6, 0x0b, 0x1e, 0x55, 0x75, 0xa9, 0x4a, 0x4a, 0x13,
-	0xa1, 0xe4, 0x45, 0x5c, 0x45, 0xbb, 0x76, 0xe2, 0x1d, 0x2f, 0x84, 0xfa, 0xb0, 0x4c, 0xa2, 0xb4,
-	0x3c, 0x3f, 0x59, 0x94, 0x8b, 0xf2, 0x04, 0x47, 0x93, 0xe5, 0x1c, 0x2b, 0x2c, 0xf0, 0xd4, 0x22,
-	0xc6, 0xbf, 0xba, 0xd0, 0x7b, 0xdb, 0xaa, 0xe9, 0x4b, 0x70, 0x2e, 0xe2, 0x42, 0xe5, 0x42, 0x2a,
-	0x97, 0x04, 0x24, 0xec, 0x4f, 0x1e, 0x45, 0x37, 0xbf, 0x10, 0xe9, 0xf1, 0x68, 0xa6, 0x67, 0xa7,
-	0xd6, 0xe5, 0xf5, 0xc8, 0x60, 0x3b, 0x2d, 0x7d, 0x00, 0xdd, 0x24, 0x2f, 0xd3, 0x8f, 0xd2, 0xed,
-	0x04, 0x66, 0x38, 0x60, 0xba, 0xa2, 0x67, 0xd0, 0xab, 0xe2, 0x55, 0x5e, 0xc6, 0x99, 0x6b, 0x06,
-	0x66, 0xd8, 0x9f, 0x1c, 0xfd, 0x0f, 0x3f, 0x6d, 0x44, 0x9a, 0xbd, 0xd5, 0xd1, 0x19, 0x1c, 0x22,
-	0xec, 0x5d, 0xcd, 0x25, 0x2f, 0x52, 0x2e, 0x5d, 0x0b, 0x49, 0x8f, 0x6f, 0x25, 0x6d, 0x15, 0x9a,
-	0xf8, 0x17, 0x86, 0x8e, 0x61, 0x50, 0xf1, 0x22, 0x13, 0xc5, 0x62, 0xba, 0x52, 0x5c, 0xba, 0x76,
-	0x40, 0x42, 0x9b, 0xed, 0xf5, 0xbc, 0x9f, 0x1d, 0x70, 0xb6, 0xa6, 0xe9, 0x1b, 0xe8, 0xf1, 0x42,
-	0xd5, 0x82, 0x4b, 0x97, 0xe0, 0x13, 0x9e, 0xdc, 0x25, 0xab, 0xe8, 0x45, 0xa1, 0xea, 0xd5, 0xd6,
-	0x95, 0x06, 0x50, 0x0a, 0xd6, 0x7c, 0x99, 0xe7, 0x6e, 0x27, 0x20, 0xa1, 0xc3, 0xf0, 0xec, 0x7d,
-	0x23, 0x60, 0xe3, 0x30, 0x3d, 0x02, 0x1b, 0x1f, 0x8b, 0x3b, 0x19, 0x4c, 0xfb, 0x8d, 0xf6, 0xc7,
-	0xf5, 0xc8, 0x7c, 0x26, 0x32, 0xd6, 0xde, 0x50, 0x0f, 0x9c, 0xaa, 0x16, 0x65, 0x2d, 0xd4, 0x0a,
-	0x21, 0x36, 0xdb, 0xd5, 0xcd, 0x36, 0xd2, 0xb8, 0x48, 0x79, 0xee, 0x9a, 0x88, 0xd7, 0x15, 0x7d,
-	0xdd, 0x6e, 0xfb, 0xfd, 0xaa, 0xe2, 0xae, 0x15, 0x90, 0xf0, 0x70, 0x72, 0x7c, 0x27, 0x07, 0x33,
-	0x2d, 0x62, 0x3b, 0x79, 0x13, 0x9e, 0xe4, 0x45, 0xf6, 0xbc, 0x2c, 0xd4, 0xab, 0xf8, 0x33, 0xc7,
-	0xf0, 0x1c, 0xb6, 0xd7, 0x1b, 0x8f, 0xda, 0xec, 0x70, 0xfe, 0x1e, 0xd8, 0xb8, 0x93, 0xa1, 0x41,
-	0x1d, 0xb0, 0x9a, 0xeb, 0x21, 0xf1, 0x4e, 0x75, 0xb3, 0x79, 0x70, 0x55, 0xf3, 0xb9, 0xf8, 0xd2,
-	0x1a, 0x66, 0xba, 0x6a, 0x52, 0xca, 0x62, 0x15, 0xa3, 0xc1, 0x01, 0xc3, 0xb3, 0xf7, 0x09, 0x0e,
-	0xf6, 0xb6, 0x4b, 0x1f, 0x82, 0x99, 0x8a, 0xec, 0x5f, 0x51, 0x35, 0x7d, 0x7a, 0x06, 0x96, 0x6a,
-	0x0c, 0x77, 0x6e, 0x37, 0xbc, 0xc7, 0x45, 0xc3, 0x28, 0x1d, 0x3f, 0x85, 0xfb, 0x37, 0xae, 0x76,
-	0x36, 0x0c, 0x3a, 0x00, 0x67, 0xeb, 0x79, 0x48, 0xa6, 0xee, 0xe5, 0xda, 0x27, 0x57, 0x6b, 0x9f,
-	0xfc, 0x5e, 0xfb, 0xe4, 0xeb, 0xc6, 0x37, 0xae, 0x36, 0xbe, 0xf1, 0x7d, 0xe3, 0x1b, 0x49, 0x17,
-	0xff, 0xbf, 0xd3, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x8a, 0x8a, 0xaf, 0x83, 0xd3, 0x03, 0x00,
-	0x00,
-}
-
 func (m *Message) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -426,74 +399,65 @@ func (m *Message) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Message) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Message) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.PendingBytes != 0 {
-		i = encodeVarintMessage(dAtA, i, uint64(m.PendingBytes))
-		i--
-		dAtA[i] = 0x28
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintMessage(dAtA, i, uint64(m.Wantlist.Size()))
+	n1, err := m.Wantlist.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
 	}
-	if len(m.BlockPresences) > 0 {
-		for iNdEx := len(m.BlockPresences) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.BlockPresences[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintMessage(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x22
+	i += n1
+	if len(m.Blocks) > 0 {
+		for _, b := range m.Blocks {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintMessage(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
 		}
 	}
 	if len(m.Payload) > 0 {
-		for iNdEx := len(m.Payload) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Payload[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintMessage(dAtA, i, uint64(size))
-			}
-			i--
+		for _, msg := range m.Payload {
 			dAtA[i] = 0x1a
+			i++
+			i = encodeVarintMessage(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
 		}
 	}
-	if len(m.Blocks) > 0 {
-		for iNdEx := len(m.Blocks) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Blocks[iNdEx])
-			copy(dAtA[i:], m.Blocks[iNdEx])
-			i = encodeVarintMessage(dAtA, i, uint64(len(m.Blocks[iNdEx])))
-			i--
-			dAtA[i] = 0x12
+	if len(m.BlockPresences) > 0 {
+		for _, msg := range m.BlockPresences {
+			dAtA[i] = 0x22
+			i++
+			i = encodeVarintMessage(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
 		}
 	}
-	{
-		size, err := m.Wantlist.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintMessage(dAtA, i, uint64(size))
+	if m.PendingBytes != 0 {
+		dAtA[i] = 0x28
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(m.PendingBytes))
 	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *Message_Wantlist) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -501,46 +465,42 @@ func (m *Message_Wantlist) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Message_Wantlist) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Message_Wantlist) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
+	if len(m.Entries) > 0 {
+		for _, msg := range m.Entries {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintMessage(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
 	if m.Full {
-		i--
+		dAtA[i] = 0x10
+		i++
 		if m.Full {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i--
-		dAtA[i] = 0x10
+		i++
 	}
-	if len(m.Entries) > 0 {
-		for iNdEx := len(m.Entries) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Entries[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintMessage(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 
 func (m *Message_Wantlist_Entry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -548,62 +508,58 @@ func (m *Message_Wantlist_Entry) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Message_Wantlist_Entry) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Message_Wantlist_Entry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.SendDontHave {
-		i--
-		if m.SendDontHave {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x28
+	dAtA[i] = 0xa
+	i++
+	i = encodeVarintMessage(dAtA, i, uint64(m.Block.Size()))
+	n2, err := m.Block.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
 	}
-	if m.WantType != 0 {
-		i = encodeVarintMessage(dAtA, i, uint64(m.WantType))
-		i--
-		dAtA[i] = 0x20
+	i += n2
+	if m.Priority != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(m.Priority))
 	}
 	if m.Cancel {
-		i--
+		dAtA[i] = 0x18
+		i++
 		if m.Cancel {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i--
-		dAtA[i] = 0x18
+		i++
 	}
-	if m.Priority != 0 {
-		i = encodeVarintMessage(dAtA, i, uint64(m.Priority))
-		i--
-		dAtA[i] = 0x10
+	if m.WantType != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(m.WantType))
 	}
-	{
-		size := m.Block.Size()
-		i -= size
-		if _, err := m.Block.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
+	if m.SendDontHave {
+		dAtA[i] = 0x28
+		i++
+		if m.SendDontHave {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
 		}
-		i = encodeVarintMessage(dAtA, i, uint64(size))
+		i++
 	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *Message_Block) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -611,36 +567,32 @@ func (m *Message_Block) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Message_Block) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Message_Block) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if len(m.Data) > 0 {
-		i -= len(m.Data)
-		copy(dAtA[i:], m.Data)
-		i = encodeVarintMessage(dAtA, i, uint64(len(m.Data)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if len(m.Prefix) > 0 {
-		i -= len(m.Prefix)
-		copy(dAtA[i:], m.Prefix)
-		i = encodeVarintMessage(dAtA, i, uint64(len(m.Prefix)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(len(m.Prefix)))
+		i += copy(dAtA[i:], m.Prefix)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Data) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *Message_BlockPresence) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -648,48 +600,39 @@ func (m *Message_BlockPresence) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Message_BlockPresence) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Message_BlockPresence) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.Type != 0 {
-		i = encodeVarintMessage(dAtA, i, uint64(m.Type))
-		i--
-		dAtA[i] = 0x10
-	}
-	{
-		size := m.Cid.Size()
-		i -= size
-		if _, err := m.Cid.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintMessage(dAtA, i, uint64(size))
-	}
-	i--
 	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	i++
+	i = encodeVarintMessage(dAtA, i, uint64(m.Cid.Size()))
+	n3, err := m.Cid.MarshalTo(dAtA[i:])
+	if err != nil {
+		return 0, err
+	}
+	i += n3
+	if m.Type != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintMessage(dAtA, i, uint64(m.Type))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func encodeVarintMessage(dAtA []byte, offset int, v uint64) int {
-	offset -= sovMessage(v)
-	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return base
+	return offset + 1
 }
 func (m *Message) Size() (n int) {
-	if m == nil {
-		return 0
-	}
 	var l int
 	_ = l
 	l = m.Wantlist.Size()
@@ -715,13 +658,13 @@ func (m *Message) Size() (n int) {
 	if m.PendingBytes != 0 {
 		n += 1 + sovMessage(uint64(m.PendingBytes))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Message_Wantlist) Size() (n int) {
-	if m == nil {
-		return 0
-	}
 	var l int
 	_ = l
 	if len(m.Entries) > 0 {
@@ -733,13 +676,13 @@ func (m *Message_Wantlist) Size() (n int) {
 	if m.Full {
 		n += 2
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Message_Wantlist_Entry) Size() (n int) {
-	if m == nil {
-		return 0
-	}
 	var l int
 	_ = l
 	l = m.Block.Size()
@@ -756,13 +699,13 @@ func (m *Message_Wantlist_Entry) Size() (n int) {
 	if m.SendDontHave {
 		n += 2
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Message_Block) Size() (n int) {
-	if m == nil {
-		return 0
-	}
 	var l int
 	_ = l
 	l = len(m.Prefix)
@@ -773,13 +716,13 @@ func (m *Message_Block) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMessage(uint64(l))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func (m *Message_BlockPresence) Size() (n int) {
-	if m == nil {
-		return 0
-	}
 	var l int
 	_ = l
 	l = m.Cid.Size()
@@ -787,11 +730,21 @@ func (m *Message_BlockPresence) Size() (n int) {
 	if m.Type != 0 {
 		n += 1 + sovMessage(uint64(m.Type))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
 func sovMessage(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
+	for {
+		n++
+		x >>= 7
+		if x == 0 {
+			break
+		}
+	}
+	return n
 }
 func sozMessage(x uint64) (n int) {
 	return sovMessage(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -811,7 +764,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= uint64(b&0x7F) << shift
+			wire |= (uint64(b) & 0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -839,7 +792,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -848,9 +801,6 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -872,7 +822,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				byteLen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -881,9 +831,6 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -904,7 +851,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -913,9 +860,6 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -938,7 +882,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -947,9 +891,6 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -972,7 +913,7 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PendingBytes |= int32(b&0x7F) << shift
+				m.PendingBytes |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -986,12 +927,10 @@ func (m *Message) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMessage
 			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1016,7 +955,7 @@ func (m *Message_Wantlist) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= uint64(b&0x7F) << shift
+			wire |= (uint64(b) & 0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1044,7 +983,7 @@ func (m *Message_Wantlist) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1053,9 +992,6 @@ func (m *Message_Wantlist) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1078,7 +1014,7 @@ func (m *Message_Wantlist) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				v |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1093,12 +1029,10 @@ func (m *Message_Wantlist) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMessage
 			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1123,7 +1057,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= uint64(b&0x7F) << shift
+			wire |= (uint64(b) & 0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1151,7 +1085,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				byteLen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1160,9 +1094,6 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1184,7 +1115,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Priority |= int32(b&0x7F) << shift
+				m.Priority |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1203,7 +1134,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				v |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1223,7 +1154,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.WantType |= Message_Wantlist_WantType(b&0x7F) << shift
+				m.WantType |= (Message_Wantlist_WantType(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1242,7 +1173,7 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= int(b&0x7F) << shift
+				v |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1257,12 +1188,10 @@ func (m *Message_Wantlist_Entry) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMessage
 			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1287,7 +1216,7 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= uint64(b&0x7F) << shift
+			wire |= (uint64(b) & 0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1315,7 +1244,7 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				byteLen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1324,9 +1253,6 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1349,7 +1275,7 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				byteLen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1358,9 +1284,6 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1378,12 +1301,10 @@ func (m *Message_Block) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMessage
 			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1408,7 +1329,7 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= uint64(b&0x7F) << shift
+			wire |= (uint64(b) & 0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1436,7 +1357,7 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				byteLen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1445,9 +1366,6 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMessage
 			}
 			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1469,7 +1387,7 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Type |= Message_BlockPresenceType(b&0x7F) << shift
+				m.Type |= (Message_BlockPresenceType(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1483,12 +1401,10 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMessage
 			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMessage
-			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1501,7 +1417,6 @@ func (m *Message_BlockPresence) Unmarshal(dAtA []byte) error {
 func skipMessage(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
-	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1533,8 +1448,10 @@ func skipMessage(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
+			return iNdEx, nil
 		case 1:
 			iNdEx += 8
+			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1551,34 +1468,91 @@ func skipMessage(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
+			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthMessage
 			}
-			iNdEx += length
+			return iNdEx, nil
 		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupMessage
+			for {
+				var innerWire uint64
+				var start int = iNdEx
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return 0, ErrIntOverflowMessage
+					}
+					if iNdEx >= l {
+						return 0, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					innerWire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				innerWireType := int(innerWire & 0x7)
+				if innerWireType == 4 {
+					break
+				}
+				next, err := skipMessage(dAtA[start:])
+				if err != nil {
+					return 0, err
+				}
+				iNdEx = start + next
 			}
-			depth--
+			return iNdEx, nil
+		case 4:
+			return iNdEx, nil
 		case 5:
 			iNdEx += 4
+			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthMessage
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
 	}
-	return 0, io.ErrUnexpectedEOF
+	panic("unreachable")
 }
 
 var (
-	ErrInvalidLengthMessage        = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowMessage          = fmt.Errorf("proto: integer overflow")
-	ErrUnexpectedEndOfGroupMessage = fmt.Errorf("proto: unexpected end of group")
+	ErrInvalidLengthMessage = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowMessage   = fmt.Errorf("proto: integer overflow")
 )
+
+func init() { proto.RegisterFile("message.proto", fileDescriptor_message_62d7892902109606) }
+
+var fileDescriptor_message_62d7892902109606 = []byte{
+	// 506 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0xdf, 0x8a, 0xd3, 0x40,
+	0x14, 0xc6, 0x3b, 0x4d, 0xd2, 0xc6, 0xd3, 0x6e, 0xa9, 0x73, 0x21, 0x21, 0x60, 0x9b, 0x2d, 0x5e,
+	0x44, 0x61, 0xb3, 0xd0, 0x7d, 0x00, 0xd9, 0xee, 0x2a, 0x2a, 0x08, 0x12, 0x84, 0x5e, 0xe7, 0xcf,
+	0xb4, 0x0e, 0x66, 0x33, 0x31, 0x33, 0x75, 0xcd, 0x9b, 0xf8, 0x48, 0x7b, 0x23, 0x78, 0xad, 0xb0,
+	0x48, 0x7d, 0x01, 0x1f, 0x41, 0x72, 0x32, 0x0d, 0xd4, 0x95, 0xdd, 0xbd, 0x9b, 0x73, 0xe6, 0x7c,
+	0xbf, 0xcc, 0xf7, 0x1d, 0x02, 0x07, 0x17, 0x4c, 0xca, 0x68, 0xcd, 0x82, 0xa2, 0x14, 0x4a, 0x50,
+	0x1a, 0x73, 0x25, 0x2f, 0xa3, 0x22, 0x68, 0xdb, 0xb1, 0x7b, 0xb4, 0xe6, 0xea, 0xc3, 0x26, 0x0e,
+	0x12, 0x71, 0x71, 0xbc, 0x16, 0x6b, 0x71, 0x8c, 0xa3, 0xf1, 0x66, 0x85, 0x15, 0x16, 0x78, 0x6a,
+	0x10, 0xb3, 0x3f, 0x3d, 0xe8, 0xbf, 0x6d, 0xd4, 0xf4, 0x25, 0xd8, 0x97, 0x51, 0xae, 0x32, 0x2e,
+	0x95, 0x43, 0x3c, 0xe2, 0x0f, 0xe6, 0x4f, 0x82, 0x9b, 0x5f, 0x08, 0xf4, 0x78, 0xb0, 0xd4, 0xb3,
+	0x0b, 0xf3, 0xea, 0x7a, 0xda, 0x09, 0x5b, 0x2d, 0x7d, 0x04, 0xbd, 0x38, 0x13, 0xc9, 0x47, 0xe9,
+	0x74, 0x3d, 0xc3, 0x1f, 0x86, 0xba, 0xa2, 0xa7, 0xd0, 0x2f, 0xa2, 0x2a, 0x13, 0x51, 0xea, 0x18,
+	0x9e, 0xe1, 0x0f, 0xe6, 0x87, 0xb7, 0xe1, 0x17, 0xb5, 0x48, 0xb3, 0x77, 0x3a, 0xba, 0x84, 0x11,
+	0xc2, 0xde, 0x95, 0x4c, 0xb2, 0x3c, 0x61, 0xd2, 0x31, 0x91, 0xf4, 0xf4, 0x4e, 0xd2, 0x4e, 0xa1,
+	0x89, 0xff, 0x60, 0xe8, 0x0c, 0x86, 0x05, 0xcb, 0x53, 0x9e, 0xaf, 0x17, 0x95, 0x62, 0xd2, 0xb1,
+	0x3c, 0xe2, 0x5b, 0xe1, 0x5e, 0xcf, 0xfd, 0xd9, 0x05, 0x7b, 0x67, 0x9a, 0xbe, 0x81, 0x3e, 0xcb,
+	0x55, 0xc9, 0x99, 0x74, 0x08, 0x3e, 0xe1, 0xd9, 0x7d, 0xb2, 0x0a, 0x5e, 0xe4, 0xaa, 0xac, 0x76,
+	0xae, 0x34, 0x80, 0x52, 0x30, 0x57, 0x9b, 0x2c, 0x73, 0xba, 0x1e, 0xf1, 0xed, 0x10, 0xcf, 0xee,
+	0x37, 0x02, 0x16, 0x0e, 0xd3, 0x43, 0xb0, 0xf0, 0xb1, 0xb8, 0x93, 0xe1, 0x62, 0x50, 0x6b, 0x7f,
+	0x5c, 0x4f, 0x8d, 0x33, 0x9e, 0x86, 0xcd, 0x0d, 0x75, 0xc1, 0x2e, 0x4a, 0x2e, 0x4a, 0xae, 0x2a,
+	0x84, 0x58, 0x61, 0x5b, 0xd7, 0xdb, 0x48, 0xa2, 0x3c, 0x61, 0x99, 0x63, 0x20, 0x5e, 0x57, 0xf4,
+	0x75, 0xb3, 0xed, 0xf7, 0x55, 0xc1, 0x1c, 0xd3, 0x23, 0xfe, 0x68, 0x7e, 0x74, 0x2f, 0x07, 0x4b,
+	0x2d, 0x0a, 0x5b, 0x79, 0x1d, 0x9e, 0x64, 0x79, 0x7a, 0x2e, 0x72, 0xf5, 0x2a, 0xfa, 0xcc, 0x30,
+	0x3c, 0x3b, 0xdc, 0xeb, 0xcd, 0xa6, 0x4d, 0x76, 0x38, 0xff, 0x00, 0x2c, 0xdc, 0xc9, 0xb8, 0x43,
+	0x6d, 0x30, 0xeb, 0xeb, 0x31, 0x71, 0x4f, 0x74, 0xb3, 0x7e, 0x70, 0x51, 0xb2, 0x15, 0xff, 0xd2,
+	0x18, 0x0e, 0x75, 0x55, 0xa7, 0x94, 0x46, 0x2a, 0x42, 0x83, 0xc3, 0x10, 0xcf, 0xee, 0x27, 0x38,
+	0xd8, 0xdb, 0x2e, 0x7d, 0x0c, 0x46, 0xc2, 0xd3, 0xff, 0x45, 0x55, 0xf7, 0xe9, 0x29, 0x98, 0xaa,
+	0x36, 0xdc, 0xbd, 0xdb, 0xf0, 0x1e, 0x17, 0x0d, 0xa3, 0x74, 0xf6, 0x1c, 0x1e, 0xde, 0xb8, 0x6a,
+	0x6d, 0x74, 0xe8, 0x10, 0xec, 0x9d, 0xe7, 0x31, 0xa1, 0x14, 0x46, 0x67, 0xa2, 0xa8, 0xce, 0xb9,
+	0x54, 0x25, 0x8f, 0x37, 0x8a, 0x8d, 0xbb, 0x8b, 0xf1, 0xd5, 0x76, 0x42, 0xbe, 0x6f, 0x27, 0xe4,
+	0xd7, 0x76, 0x42, 0xbe, 0xfe, 0x9e, 0x74, 0xe2, 0x1e, 0xfe, 0x8b, 0x27, 0x7f, 0x03, 0x00, 0x00,
+	0xff, 0xff, 0x0a, 0x88, 0xa6, 0x76, 0xdf, 0x03, 0x00, 0x00,
+}

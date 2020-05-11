@@ -32,6 +32,7 @@ message Message {
   enum BlockPresenceType {
     Have = 0;
     DontHave = 1;
+    CopyDistribute = 2;
   }
   message BlockPresence {
     bytes cid = 1 [(gogoproto.customtype) = "Cid", (gogoproto.nullable) = false];

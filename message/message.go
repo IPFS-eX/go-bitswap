@@ -60,6 +60,9 @@ type BitSwapMessage interface {
 	AddBlock(blocks.Block)
 	// AddBlockPresence adds a HAVE / DONT_HAVE for the given Cid to the message
 	AddBlockPresence(cid.Cid, pb.Message_BlockPresenceType)
+	GetBlockPresence(cid.Cid) pb.Message_BlockPresenceType
+
+	AddCopyDistribute(cid.Cid)
 	// AddHave adds a HAVE for the given Cid to the message
 	AddHave(cid.Cid)
 	// AddDontHave adds a DONT_HAVE for the given Cid to the message
@@ -354,6 +357,14 @@ func (m *impl) addEntry(c cid.Cid, priority int32, cancel bool, wantType pb.Mess
 func (m *impl) AddBlock(b blocks.Block) {
 	delete(m.blockPresences, b.Cid())
 	m.blocks[b.Cid()] = b
+}
+
+func (m *impl) GetBlockPresence(c cid.Cid) pb.Message_BlockPresenceType {
+	return m.blockPresences[c]
+}
+
+func (m *impl) AddCopyDistribute(c cid.Cid) {
+	m.blockPresences[c] = pb.Message_CopyDistribute
 }
 
 func (m *impl) AddBlockPresence(c cid.Cid, t pb.Message_BlockPresenceType) {
