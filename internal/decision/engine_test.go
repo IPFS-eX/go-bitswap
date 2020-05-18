@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ipfs/go-bitswap/internal/testutil"
-	message "github.com/ipfs/go-bitswap/message"
-	pb "github.com/ipfs/go-bitswap/message/pb"
+	"github.com/ETHFSx/go-bitswap/internal/testutil"
+	message "github.com/ETHFSx/go-bitswap/message"
+	pb "github.com/ETHFSx/go-bitswap/message/pb"
 
 	blocks "github.com/ipfs/go-block-format"
 	cid "github.com/ipfs/go-cid"

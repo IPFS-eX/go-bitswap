@@ -3,7 +3,7 @@ package wantlist
 import (
 	"testing"
 
-	pb "github.com/ipfs/go-bitswap/message/pb"
+	pb "github.com/ETHFSx/go-bitswap/message/pb"
 	cid "github.com/ipfs/go-cid"
 )
 

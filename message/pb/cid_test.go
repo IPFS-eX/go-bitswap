@@ -7,7 +7,7 @@ import (
 	"github.com/ipfs/go-cid"
 	u "github.com/ipfs/go-ipfs-util"
 
-	pb "github.com/ipfs/go-bitswap/message/pb"
+	pb "github.com/ETHFSx/go-bitswap/message/pb"
 )
 
 func TestCID(t *testing.T) {

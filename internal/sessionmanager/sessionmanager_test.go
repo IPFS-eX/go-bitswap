@@ -8,12 +8,12 @@ import (
 
 	delay "github.com/ipfs/go-ipfs-delay"
 
-	bsbpm "github.com/ipfs/go-bitswap/internal/blockpresencemanager"
-	notifications "github.com/ipfs/go-bitswap/internal/notifications"
-	bspm "github.com/ipfs/go-bitswap/internal/peermanager"
-	bssession "github.com/ipfs/go-bitswap/internal/session"
-	bssim "github.com/ipfs/go-bitswap/internal/sessioninterestmanager"
-	"github.com/ipfs/go-bitswap/internal/testutil"
+	bsbpm "github.com/ETHFSx/go-bitswap/internal/blockpresencemanager"
+	notifications "github.com/ETHFSx/go-bitswap/internal/notifications"
+	bspm "github.com/ETHFSx/go-bitswap/internal/peermanager"
+	bssession "github.com/ETHFSx/go-bitswap/internal/session"
+	bssim "github.com/ETHFSx/go-bitswap/internal/sessioninterestmanager"
+	"github.com/ETHFSx/go-bitswap/internal/testutil"
 
 	blocks "github.com/ipfs/go-block-format"
 	cid "github.com/ipfs/go-cid"
