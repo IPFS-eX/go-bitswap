@@ -1,4 +1,4 @@
-module github.com/ipfs/go-bitswap
+module github.com/ETHFSx/go-bitswap
 
 require (
 	github.com/cskr/pubsub v1.0.2
