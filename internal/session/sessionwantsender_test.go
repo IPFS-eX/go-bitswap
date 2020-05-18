@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	bsbpm "github.com/ipfs/go-bitswap/internal/blockpresencemanager"
-	bspm "github.com/ipfs/go-bitswap/internal/peermanager"
-	"github.com/ipfs/go-bitswap/internal/testutil"
+	bsbpm "github.com/ETHFSx/go-bitswap/internal/blockpresencemanager"
+	bspm "github.com/ETHFSx/go-bitswap/internal/peermanager"
+	"github.com/ETHFSx/go-bitswap/internal/testutil"
 	cid "github.com/ipfs/go-cid"
 	peer "github.com/libp2p/go-libp2p-core/peer"
 )
