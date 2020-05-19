@@ -1,7 +1,7 @@
 module github.com/ETHFSx/go-bitswap
 
 require (
-	github.com/ETHFSx/go-blockservice v0.1.5-rc.0
+	github.com/ETHFSx/go-blockservice v0.1.5-rc.1
 	github.com/ETHFSx/go-ipfs-exchange-interface v0.0.2
 	github.com/cskr/pubsub v1.0.2
 	github.com/gogo/protobuf v1.3.1
