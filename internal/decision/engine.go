@@ -9,9 +9,9 @@ import (
 
 	"github.com/google/uuid"
 
-	bsmsg "github.com/ETHFSx/go-bitswap/message"
-	pb "github.com/ETHFSx/go-bitswap/message/pb"
-	wl "github.com/ETHFSx/go-bitswap/wantlist"
+	bsmsg "github.com/IPFS-eX/go-bitswap/message"
+	pb "github.com/IPFS-eX/go-bitswap/message/pb"
+	wl "github.com/IPFS-eX/go-bitswap/wantlist"
 	blocks "github.com/ipfs/go-block-format"
 	cid "github.com/ipfs/go-cid"
 	bstore "github.com/ipfs/go-ipfs-blockstore"

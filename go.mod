@@ -1,21 +1,23 @@
-module github.com/ETHFSx/go-bitswap
+module github.com/IPFS-eX/go-bitswap
 
 require (
-	github.com/ETHFSx/go-blockservice v0.1.5-rc.1
-	github.com/ETHFSx/go-ipfs-exchange-interface v0.0.2
 	github.com/cskr/pubsub v1.0.2
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.1.1
+	github.com/ipfs/go-bitswap v0.1.8
 	github.com/ipfs/go-block-format v0.0.2
+	github.com/ipfs/go-blockservice v0.1.0
 	github.com/ipfs/go-cid v0.0.5
 	github.com/ipfs/go-datastore v0.4.4
 	github.com/ipfs/go-detect-race v0.0.1
 	github.com/ipfs/go-ipfs-blockstore v0.1.4
 	github.com/ipfs/go-ipfs-blocksutil v0.0.1
 	github.com/ipfs/go-ipfs-delay v0.0.1
+	github.com/ipfs/go-ipfs-exchange-interface v0.0.1
 	github.com/ipfs/go-ipfs-routing v0.1.0
 	github.com/ipfs/go-ipfs-util v0.0.1
+	github.com/ipfs/go-ipld-format v0.0.2
 	github.com/ipfs/go-log v1.0.4
 	github.com/ipfs/go-merkledag v0.3.2
 	github.com/ipfs/go-metrics-interface v0.0.1

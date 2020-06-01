@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	bsmsg "github.com/ETHFSx/go-bitswap/message"
+	bsmsg "github.com/IPFS-eX/go-bitswap/message"
 
 	cid "github.com/ipfs/go-cid"
 

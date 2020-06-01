@@ -5,8 +5,8 @@ import (
 	"sync"
 	"testing"
 
-	bsmsg "github.com/ETHFSx/go-bitswap/message"
-	bsnet "github.com/ETHFSx/go-bitswap/network"
+	bsmsg "github.com/IPFS-eX/go-bitswap/message"
+	bsnet "github.com/IPFS-eX/go-bitswap/network"
 
 	blocks "github.com/ipfs/go-block-format"
 	delay "github.com/ipfs/go-ipfs-delay"

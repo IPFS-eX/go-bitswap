@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/ETHFSx/go-bitswap/message/pb"
-	wl "github.com/ETHFSx/go-bitswap/wantlist"
+	pb "github.com/IPFS-eX/go-bitswap/message/pb"
+	wl "github.com/IPFS-eX/go-bitswap/wantlist"
 
 	cid "github.com/ipfs/go-cid"
 	peer "github.com/libp2p/go-libp2p-core/peer"

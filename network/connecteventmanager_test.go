@@ -3,7 +3,7 @@ package network
 import (
 	"testing"
 
-	"github.com/ETHFSx/go-bitswap/internal/testutil"
+	"github.com/IPFS-eX/go-bitswap/internal/testutil"
 	"github.com/libp2p/go-libp2p-core/peer"
 )
 

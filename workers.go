@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	engine "github.com/ETHFSx/go-bitswap/internal/decision"
-	pb "github.com/ETHFSx/go-bitswap/message/pb"
+	engine "github.com/IPFS-eX/go-bitswap/internal/decision"
+	pb "github.com/IPFS-eX/go-bitswap/message/pb"
 	cid "github.com/ipfs/go-cid"
 	process "github.com/jbenet/goprocess"
 	procctx "github.com/jbenet/goprocess/context"

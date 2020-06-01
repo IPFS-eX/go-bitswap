@@ -5,8 +5,8 @@ import (
 	"errors"
 	"io"
 
-	pb "github.com/ETHFSx/go-bitswap/message/pb"
-	"github.com/ETHFSx/go-bitswap/wantlist"
+	pb "github.com/IPFS-eX/go-bitswap/message/pb"
+	"github.com/IPFS-eX/go-bitswap/wantlist"
 
 	blocks "github.com/ipfs/go-block-format"
 	cid "github.com/ipfs/go-cid"

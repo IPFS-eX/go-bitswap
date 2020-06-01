@@ -3,7 +3,7 @@ package decision
 import (
 	"testing"
 
-	"github.com/ETHFSx/go-bitswap/internal/testutil"
+	"github.com/IPFS-eX/go-bitswap/internal/testutil"
 	"github.com/ipfs/go-peertaskqueue"
 	"github.com/ipfs/go-peertaskqueue/peertask"
 )
